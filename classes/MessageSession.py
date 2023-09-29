@@ -1,11 +1,12 @@
 
 
 class MessageSession:
-    def __init__(self, bot_object, bot, message, from_bot=False):
+    def __init__(self, bot_object, bot, message, from_bot=False, user=None):
         self.bot = bot
         self.bot_object = bot_object
         self.message = message
         self.from_bot = from_bot
+        self.user = user if user else self.message.from_user
 
     def send(self, text, *args, **kwargs):
         self.bot.send_message(

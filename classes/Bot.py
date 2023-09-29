@@ -56,7 +56,7 @@ class Bot:
 
         @self.bot.callback_query_handler(lambda x: True)
         def handle_callback(call):
-            ms = MessageSession(self, self.bot, call.message, from_bot=True)
+            ms = MessageSession(self, self.bot, call.message, from_bot=True, user=call.from_user)
             self.bot.answer_callback_query(call.id)
             self.trigger_event(call.data, ms=ms)
 
