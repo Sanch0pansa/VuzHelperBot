@@ -1,0 +1,12 @@
+<root>
+    <msg>
+        Ваши группы:
+{% if not groups %}<i>❗️ Вы не состоите в группе. Запросите ссылку-приглашение у старосты Вашей группы.</i>{% endif %}
+    </msg>
+    <markup>
+        {% for group in groups %}
+        <row><button ev="my_groups/?group={{ group[0] }}">{{ group[1] }}</button></row>
+        {% endfor %}
+        <row><button ev="menu/">⬅️ Назад</button></row>
+    </markup>
+</root>

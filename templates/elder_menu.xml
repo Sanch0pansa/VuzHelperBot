@@ -1,0 +1,13 @@
+<root>
+    <msg>
+        Меню старосты:
+{% if not groups %}<i>❗️ У вас нет групп под управлением. Если вы являетесь старостой, создайте группу.</i>{% endif %}
+    </msg>
+    <markup>
+        {% for group in groups %}
+        <row><button ev="my_groups/?group={{ group[0] }}">{{ group[1] }}</button></row>
+        {% endfor %}
+        <row><button ev="new_group/">➕ Создать группу</button></row>
+        <row><button ev="menu/">⬅️ Назад</button></row>
+    </markup>
+</root>

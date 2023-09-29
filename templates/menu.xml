@@ -1,0 +1,11 @@
+<root>
+    <msg>
+        Меню студента (<b>старосты</b>)
+    </msg>
+    <markup>
+        <row>
+            <button ev="my_groups/">👥 Мои группы</button>
+            <button ev="elder_menu/">💼 Управление</button>
+        </row>
+    </markup>
+</root>
