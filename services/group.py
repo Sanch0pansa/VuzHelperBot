@@ -2,9 +2,36 @@ import sqlite3
 
 
 class GroupDB:
-    def __init__(self, db_path):
-        self.conn = sqlite3.connect(db_path)
-        self.cursor = self.conn.cursor()
+    def __init__(self, conn, cursor):
+        self.conn = conn
+        self.cursor = cursor
+        self.create_group_table_if_not_exists()  # Add this line to constructor
+        self.create_group_members_table_if_not_exists()  # Add this line to constructor
+
+    def create_group_table_if_not_exists(self):
+        create_table_query = """
+                    CREATE TABLE IF NOT EXISTS groups (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT,
+                        elder_id INTEGER,
+                        FOREIGN KEY (elder_id) REFERENCES users(id)
+                    )
+                """
+        self.cursor.execute(create_table_query)
+        self.conn.commit()
+
+    def create_group_members_table_if_not_exists(self):
+        create_table_query = """
+                    CREATE TABLE IF NOT EXISTS group_membership (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        group_id INTEGER,
+                        user_id INTEGER,
+                        FOREIGN KEY (group_id) REFERENCES groups(id),
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+                    )
+                """
+        self.cursor.execute(create_table_query)
+        self.conn.commit()
 
     def get_by_id(self, group_id):
         self.cursor.execute("SELECT * FROM groups WHERE id=?", (group_id,))

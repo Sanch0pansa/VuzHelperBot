@@ -4,9 +4,22 @@ import sqlite3
 
 
 class UserDB:
-    def __init__(self, db_path):
-        self.conn = sqlite3.connect(db_path)
-        self.cursor = self.conn.cursor()
+    def __init__(self, conn, cursor):
+        self.conn = conn
+        self.cursor = cursor
+        self.create_user_table_if_not_exists()
+
+    def create_user_table_if_not_exists(self):
+        create_table_query = """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT,
+                telegram_id TEXT,
+                name TEXT
+            )
+        """
+        self.cursor.execute(create_table_query)
+        self.conn.commit()
 
     def get_by_id(self, user_id):
         self.cursor.execute("SELECT * FROM users WHERE id=?", (user_id,))

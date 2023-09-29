@@ -3,9 +3,40 @@ import time
 
 
 class RequestDB:
-    def __init__(self, db_path):
-        self.conn = sqlite3.connect(db_path)
-        self.cursor = self.conn.cursor()
+    def __init__(self, conn, cursor):
+        self.conn = conn
+        self.cursor = cursor
+        self.create_request_table_if_not_exists()  # Add this line to constructor
+        self.create_request_answers_table_if_not_exists()  # Add this line to constructor
+
+    def create_request_table_if_not_exists(self):
+        create_table_query = """
+                    CREATE TABLE IF NOT EXISTS requests (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        group_id INTEGER,
+                        name TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (group_id) REFERENCES groups(id)
+                    )
+                """
+        self.cursor.execute(create_table_query)
+        self.conn.commit()
+
+    def create_request_answers_table_if_not_exists(self):
+        create_table_query = """
+                    CREATE TABLE IF NOT EXISTS request_answers (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        request_id INTEGER,
+                        user_id INTEGER,
+                        request_status TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (request_id) REFERENCES requests(id),
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+                    )
+                """
+        self.cursor.execute(create_table_query)
+        self.conn.commit()
 
     def get_by_id(self, request_id):
         self.cursor.execute("SELECT * FROM requests WHERE id=?", (request_id,))
