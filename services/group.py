@@ -34,21 +34,19 @@ class GroupDB:
         self.conn.commit()
 
     def get_by_id(self, group_id):
+
         self.cursor.execute("SELECT * FROM groups WHERE id=?", (group_id,))
         group_data = self.cursor.fetchone()
         return group_data
 
-    def get_by_elder_id(self, elder_id):
+    def get_all_groups_by_elder(self, elder_id):
         self.cursor.execute("SELECT * FROM groups WHERE elder_id=?", (elder_id,))
-        group_data = self.cursor.fetchone()
+        group_data = self.cursor.fetchall()
         return group_data
 
-    def create(self, group_id, elder_id, data):
-        # data is a dictionary containing group data
-        fields = "id, elder_id, " + ", ".join(data.keys())
-        values_placeholders = "?, ?" + (", ?" * len(data))
-        values = (group_id, elder_id) + tuple(data.values())
-        query = f"INSERT INTO groups ({fields}) VALUES ({values_placeholders})"
+    def create(self, elder_id, name):
+        values = (elder_id, name)
+        query = f"INSERT INTO groups (elder_id, name) VALUES (?, ?)"
         self.cursor.execute(query, values)
         self.conn.commit()
 
@@ -83,3 +81,14 @@ class GroupDB:
             (group_id,))
         users_data = self.cursor.fetchall()
         return users_data
+
+    def get_all_groups_by_user(self, user_id):
+        query = """
+            SELECT groups.id, groups.name, groups.elder_id
+            FROM groups
+            JOIN group_membership ON groups.id = group_membership.group_id
+            WHERE group_membership.user_id = ?
+        """
+        self.cursor.execute(query, (user_id,))
+        groups_data = self.cursor.fetchall()
+        return groups_data
